@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNH Enchanted Rock Secret Santa 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        .twinkle {
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        }
+        /* Enchanted Rock inspired gradient background */
+        .enchanted-bg {
+            background: linear-gradient(135deg, 
+                #1a1a2e 0%, 
+                #16213e 25%, 
+                #0f3460 50%, 
+                #533a71 75%, 
+                #6b4e71 100%
+            );
+        }
+        /* Granite texture overlay */
+        .granite-texture {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 200, 180, 0.05) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // ============================================
+        // SECRET SANTA CONFIGURATION
+        // ============================================
+        const secretSantaData = {
+            "scott": {
+                name: "Scott",
+                password: "anotherround",
+                recipient: "Ethan",
+                favoriteColor: "#4169E1",
+                hobbies: ["Disc Golf", "D&D"],
+                snacks: ["Cookie Dough Bites", "Arizona Green Tea"],
+                allergies: ["Bananas", "Avocados"],
+                funFact: "Scott is caucasian.",
+                photo: "photos/scott.jpg"
+            },
+            "atticus": {
+                name: "Atticus",
+                password: "anythingbutben10causeifthepasswordwasben10peoplewouldguessit",
+                recipient: "Gavin",
+                favoriteColor: "#228B22",
+                hobbies: ["Early 2000s cartoons (Ben 10, ATLA, Pokemon)", "Time travel"],
+                snacks: ["Hershey Drops", "Blue Calypso Lemonade"],
+                allergies: ["Polyester", "Doesn't like eggs"],
+                funFact: "Atticus only walks on his tiptoes and is obsessed with Ben 10!",
+                photo: "photos/atticus.jpg"
+            },
+            "bob": {
+                name: "Bob",
+                password: "genshinmorelikegetsomebitches",
+                recipient: "Scott",
+                favoriteColor: "#8FBC8F",
+                hobbies: ["One Piece", "ATLA", "Slime Rancher", "Studio Ghibli"],
+                snacks: ["Lightly salted cashews"],
+                allergies: ["None"],
+                funFact: "Bob was raised learning several methods of fighting and is going to practice law!",
+                photo: "photos/bob.jpg"
+            },
+            "ethan": {
+                name: "Ethan",
+                password: "nolongerbaristaboy",
+                recipient: "Bump",
+                favoriteColor: "#7D6E5C",
+                hobbies: ["Journaling", "Sketching"],
+                snacks: ["Ghirardelli 80-89% Dark Chocolate"],
+                allergies: ["None"],
+                funFact: "Ethan eats nails poured over broken glass for breakfast!",
+                photo: "photos/ethan.jpg"
+            },
+            "gavin": {
+                name: "Gavin",
+                password: "Iyearnforafactorioandkirbycrossover",
+                recipient: "Dutch",
+                favoriteColor: "#30D5C8",
+                hobbies: ["Piano/Organ", "Card games", "Pokemon"],
+                snacks: ["Chocolate Chip Cookies"],
+                allergies: ["Prefers sweets"],
+                funFact: "Gavin has a closet filled with stuffed animals! (90% of them are Kirby)",
+                photo: "photos/gavin.jpg"
+            },
+            "brayden": {
+                name: "Brayden",
+                password: "atriocfan",
+                recipient: "Bob",
+                favoriteColor: "#BE8077",
+                hobbies: ["Binge watching YouTube (Atrioc)", "Minecraft", "Stardew Valley"],
+                snacks: ["Nutter Butters"],
+                allergies: ["None"],
+                funFact: "Brayden has lived a third of his life without being kissed! *wink wink*",
+                photo: "photos/brayden.jpg"
+            },
+            "dutch": {
+                name: "Dutch",
+                password: "FFXIVtilthedayidiefrfr",
+                recipient: "Atticus",
+                favoriteColor: "#6B8E23",
+                hobbies: ["Painting", "Jewelry making", "FFXIV"],
+                snacks: ["Flaming Hot Lime Cheetos (Crunchy)", "Lays Dill Pickle", "Yerba Bluephoria"],
+                allergies: ["None"],
+                funFact: "Dutch is a big plant person and desperately needs some for their new spot!!",
+                photo: "photos/dutch.jpg"
+            },
+            "bump": {
+                name: "Bump",
+                password: "spacehiker",
+                recipient: "Brayden",
+                favoriteColor: "#2D5016",
+                hobbies: ["Soccer", "Space", "Hiking"],
+                snacks: ["Twizzlers"],
+                allergies: ["Raw Carrots"],
+                funFact: "Bump has hitchhiked out of the wild!",
+                photo: "photos/bump.jpg"
+            }
+        };
+
+        const logoUrl = "photos/logo.png";
+
+        // ============================================
+        // MAIN APP COMPONENT
+        // ============================================
+        function EnchantedRockSecretSanta() {
+            const [step, setStep] = useState(1);
+            const [nameInput, setNameInput] = useState('');
+            const [passwordInput, setPasswordInput] = useState('');
+            const [error, setError] = useState('');
+            const [userData, setUserData] = useState(null);
+            const [recipientData, setRecipientData] = useState(null);
+
+            const handleNameSubmit = () => {
+                const data = secretSantaData[nameInput.toLowerCase().trim()];
+                if (data) {
+                    setUserData(data);
+                    setStep(2);
+                    setError('');
+                } else {
+                    setError("That name isn't on our list. Check your spelling!");
+                    setNameInput('');
+                }
+            };
+
+            const handlePasswordSubmit = () => {
+                if (passwordInput === userData.password) {
+                    const recipient = secretSantaData[userData.recipient.toLowerCase()];
+                    setRecipientData(recipient);
+                    setStep(3);
+                    setError('');
+                } else {
+                    setError('Wrong password! Try again');
+                    setPasswordInput('');
+                }
+            };
+
+            const handleReset = () => {
+                setStep(1);
+                setNameInput('');
+                setPasswordInput('');
+                setUserData(null);
+                setRecipientData(null);
+                setError('');
+            };
+
+            // SVG Icons
+            const TreeIcon = () => (
+                <svg className="w-16 h-16 opacity-20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L8 8h3v2L7 16h4v6h2v-6h4l-4-6v-2h3z"/>
+                </svg>
+            );
+
+            const MountainIcon = () => (
+                <svg className="w-20 h-20 opacity-15" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14 8l5.5 9.5M10 8L4.5 17.5M12 2L2 20h20L12 2z"/>
+                </svg>
+            );
+
+            const StarIcon = () => (
+                <svg className="w-4 h-4 twinkle" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0l2.8 8.6h9l-7.3 5.3 2.8 8.6L12 17.2l-7.3 5.3 2.8-8.6L.2 8.6h9L12 0z"/>
+                </svg>
+            );
+
+            // STEP 1: Name Entry
+            if (step === 1) {
+                return (
+                    <div className="min-h-screen enchanted-bg granite-texture flex items-center justify-center p-4 relative overflow-hidden">
+                        {/* Decorative Background Elements */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            <div className="absolute top-10 left-10 text-green-700"><TreeIcon /></div>
+                            <div className="absolute top-20 right-16 text-green-700"><TreeIcon /></div>
+                            <div className="absolute bottom-20 left-20 text-green-700"><TreeIcon /></div>
+                            <div className="absolute bottom-16 right-24 text-green-700"><TreeIcon /></div>
+                            <div className="absolute top-1/3 left-1/4 text-purple-300"><MountainIcon /></div>
+                            <div className="absolute top-1/2 right-1/4 text-purple-300"><MountainIcon /></div>
+                            
+                            {/* Stars */}
+                            <div className="absolute top-16 left-1/3 text-yellow-200"><StarIcon /></div>
+                            <div className="absolute top-32 right-1/3 text-yellow-200"><StarIcon /></div>
+                            <div className="absolute bottom-40 left-1/2 text-yellow-200"><StarIcon /></div>
+                            <div className="absolute top-48 left-1/4 text-yellow-200"><StarIcon /></div>
+                            <div className="absolute bottom-32 right-1/3 text-yellow-200"><StarIcon /></div>
+                        </div>
+
+                        {/* Main Card */}
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-lg w-full relative z-10 border-4 border-orange-200">
+                            <div className="text-center mb-8">
+                                {logoUrl && (
+                                    <div className="float-animation mb-6">
+                                        <img src={logoUrl} alt="TNH Logo" className="w-40 h-40 mx-auto object-contain drop-shadow-lg" />
+                                    </div>
+                                )}
+                                <div className="space-y-2 mb-6">
+                                    <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+                                        TNH Enchanted Rock
+                                    </h1>
+                                    <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-red-600 via-green-600 to-red-600 bg-clip-text text-transparent">
+                                        Secret Santa 2025
+                                    </h2>
+                                    <div className="flex items-center justify-center gap-2 text-2xl">
+                                        <span>🏕️</span>
+                                        <span>🎄</span>
+                                        <span>🎁</span>
+                                    </div>
+                                </div>
+                                <p className="text-gray-600 text-base">
+                                    Step 1: Enter your first name
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <input
+                                    type="text"
+                                    value={nameInput}
+                                    onChange={(e) => setNameInput(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleNameSubmit()}
+                                    placeholder="Your name..."
+                                    className="w-full px-5 py-4 border-3 border-gray-300 rounded-2xl focus:border-green-600 focus:ring-2 focus:ring-green-200 focus:outline-none text-lg transition-all"
+                                    autoFocus
+                                />
+                                
+                                {error && (
+                                    <div className="bg-red-50 border-2 border-red-400 text-red-800 px-4 py-3 rounded-xl text-sm font-medium">
+                                        {error}
+                                    </div>
+                                )}
+
+                                <button
+                                    onClick={handleNameSubmit}
+                                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-4 rounded-2xl transition-all transform hover:scale-105 shadow-lg text-lg"
+                                >
+                                    Next Step →
+                                </button>
+                            </div>
+
+                            <div className="mt-8 text-center">
+                                <div className="inline-block bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-300 rounded-2xl px-6 py-4">
+                                    <p className="text-base font-bold text-orange-900">Budget: $20-25</p>
+                                    <p className="text-sm text-orange-700 mt-1">Keep it fun & camping-friendly!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // STEP 2: Password Entry
+            if (step === 2) {
+                return (
+                    <div className="min-h-screen enchanted-bg granite-texture flex items-center justify-center p-4 relative overflow-hidden">
+                        {/* Decorative Background */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            <div className="absolute top-10 left-10 text-green-700"><TreeIcon /></div>
+                            <div className="absolute top-20 right-16 text-green-700"><TreeIcon /></div>
+                            <div className="absolute bottom-20 left-20 text-green-700"><TreeIcon /></div>
+                            <div className="absolute bottom-16 right-24 text-green-700"><TreeIcon /></div>
+                            <div className="absolute top-16 left-1/3 text-yellow-200"><StarIcon /></div>
+                            <div className="absolute top-32 right-1/3 text-yellow-200"><StarIcon /></div>
+                            <div className="absolute bottom-40 left-1/2 text-yellow-200"><StarIcon /></div>
+                        </div>
+
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-lg w-full relative z-10 border-4 border-orange-200">
+                            <div className="text-center mb-8">
+                                {logoUrl && (
+                                    <div className="float-animation mb-6">
+                                        <img src={logoUrl} alt="TNH Logo" className="w-32 h-32 mx-auto object-contain drop-shadow-lg" />
+                                    </div>
+                                )}
+                                <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+                                    Welcome, {userData.name}! 👋
+                                </h1>
+                                <p className="text-gray-600 text-base">
+                                    Step 2: Enter your secret password
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                <input
+                                    type="password"
+                                    value={passwordInput}
+                                    onChange={(e) => setPasswordInput(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+                                    placeholder="Your secret password..."
+                                    className="w-full px-5 py-4 border-3 border-gray-300 rounded-2xl focus:border-green-600 focus:ring-2 focus:ring-green-200 focus:outline-none text-lg transition-all"
+                                    autoFocus
+                                />
+                                
+                                {error && (
+                                    <div className="bg-red-50 border-2 border-red-400 text-red-800 px-4 py-3 rounded-xl text-sm font-medium">
+                                        {error}
+                                    </div>
+                                )}
+
+                                <button
+                                    onClick={handlePasswordSubmit}
+                                    className="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 text-white font-bold py-4 rounded-2xl transition-all transform hover:scale-105 shadow-lg text-lg"
+                                >
+                                    🎁 Reveal My Person! 🎄
+                                </button>
+
+                                <button
+                                    onClick={handleReset}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-2xl transition-all"
+                                >
+                                    ← Go Back
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // STEP 3: Reveal
+            return (
+                <div className="min-h-screen enchanted-bg granite-texture flex items-center justify-center p-4 relative overflow-hidden">
+                    {/* Festive Background */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                        <div className="absolute top-20 left-20 text-yellow-200"><StarIcon /></div>
+                        <div className="absolute top-40 right-32 text-yellow-200"><StarIcon /></div>
+                        <div className="absolute bottom-32 left-40 text-yellow-200"><StarIcon /></div>
+                        <div className="absolute bottom-20 right-20 text-yellow-200"><StarIcon /></div>
+                        <div className="absolute top-1/4 left-16 text-yellow-200"><StarIcon /></div>
+                        <div className="absolute bottom-1/3 right-24 text-yellow-200"><StarIcon /></div>
+                    </div>
+
+                    <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-10 max-w-3xl w-full relative z-10 border-4 border-orange-200">
+                        {/* Header */}
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                                Hey {userData.name}! 🎉
+                            </h2>
+                            <p className="text-gray-600 text-lg">Your Secret Santa assignment is...</p>
+                        </div>
+
+                        {/* Big Reveal Box */}
+                        <div className="bg-gradient-to-br from-red-100 via-green-100 to-red-100 border-4 border-green-400 rounded-3xl p-8 mb-8 text-center shadow-lg">
+                            {recipientData.photo && (
+                                <img 
+                                    src={recipientData.photo} 
+                                    alt={recipientData.name}
+                                    className="w-40 h-40 rounded-full mx-auto mb-6 object-cover border-4 border-white shadow-xl"
+                                />
+                            )}
+                            <div className="flex items-center justify-center gap-4 mb-3">
+                                <span className="text-5xl">🎁</span>
+                                <h3 className="text-5xl md:text-6xl font-bold text-gray-900">
+                                    {recipientData.name}
+                                </h3>
+                                <span className="text-5xl">🎄</span>
+                            </div>
+                            <p className="text-gray-700 text-lg font-medium mt-2">
+                                Time to find the perfect gift!
+                            </p>
+                        </div>
+
+                        {/* Info Grid */}
+                        <div className="grid md:grid-cols-2 gap-5 mb-6">
+                            {/* Favorite Color */}
+                            <div className="bg-purple-50 border-3 border-purple-300 rounded-2xl p-5 shadow">
+                                <h4 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
+                                    <span className="text-2xl">💜</span>
+                                    Favorite Color
+                                </h4>
+                                <div className="flex items-center gap-3">
+                                    <div 
+                                        className="w-12 h-12 rounded-full border-3 border-gray-400 shadow-md"
+                                        style={{ backgroundColor: recipientData.favoriteColor }}
+                                    ></div>
+                                    <p className="text-gray-800 font-medium">{recipientData.favoriteColor}</p>
+                                </div>
+                            </div>
+
+                            {/* Allergies/Preferences */}
+                            <div className="bg-blue-50 border-3 border-blue-300 rounded-2xl p-5 shadow">
+                                <h4 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
+                                    <span className="text-2xl">⚠️</span>
+                                    Allergies/Preferences
+                                </h4>
+                                <p className="text-gray-800 font-medium">
+                                    {recipientData.allergies.join(', ')}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Hobbies */}
+                        <div className="bg-green-50 border-3 border-green-300 rounded-2xl p-6 mb-5 shadow">
+                            <h4 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+                                <span className="text-2xl">🎮</span>
+                                Hobbies & Interests
+                            </h4>
+                            <div className="flex flex-wrap gap-3">
+                                {recipientData.hobbies.map((hobby, i) => (
+                                    <span key={i} className="bg-white px-4 py-2 rounded-full text-sm font-medium text-gray-800 border-2 border-green-300 shadow-sm">
+                                        {hobby}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Snacks */}
+                        <div className="bg-amber-50 border-3 border-amber-300 rounded-2xl p-6 mb-5 shadow">
+                            <h4 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+                                <span className="text-2xl">🍿</span>
+                                Favorite Snacks & Drinks
+                            </h4>
+                            <ul className="space-y-2">
+                                {recipientData.snacks.map((snack, i) => (
+                                    <li key={i} className="text-gray-800 font-medium flex items-center gap-2">
+                                        <span className="text-amber-600 text-xl">•</span>
+                                        {snack}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* Fun Fact */}
+                        <div className="bg-pink-50 border-3 border-pink-300 rounded-2xl p-6 mb-6 shadow">
+                            <h4 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
+                                <span className="text-2xl">✨</span>
+                                Fun Fact
+                            </h4>
+                            <p className="text-gray-800 font-medium italic">"{recipientData.funFact}"</p>
+                        </div>
+
+                        {/* Action Button */}
+                        <button
+                            onClick={handleReset}
+                            className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-bold py-4 rounded-2xl transition-all shadow-lg text-lg"
+                        >
+                            🔒 Lock It Back Up
+                        </button>
+
+                        <p className="text-center text-gray-600 mt-5 text-base font-medium">
+                            🤫 Keep it secret until Enchanted Rock!
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<EnchantedRockSecretSanta />, document.getElementById('root'));
+    </script>
+</body>
+</html>
